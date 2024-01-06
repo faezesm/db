@@ -3,6 +3,28 @@ from django.contrib.auth import get_user_model
 
 from . models import Cryptocurrency,Customer, MasterCart, CommentCryptocurrency,CommentMasterCart, Cart, CartItem
 
+class CustomerSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(max_length = 255 , source='user.full_name')
+    username = serializers.CharField(max_length = 255 , source='user.username')
+    password = serializers.CharField(max_length = 255 , source='user.password')
+    is_staff = serializers.CharField(max_length = 255 , source='user.is_staff')
+    class Meta:
+        model = Customer
+        fields = ['id','full_name','username','password','is_staff']
+        read_only_fields =['user']
+
+
+
+class ForAdminCurrencySerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model = Cryptocurrency
+        fields =['id', 'user','title','price','image','description','status', 'datetime_created']
+        read_only_fields =['user']
+    
+    def create(self, validate_data):
+        user_id = self.context['user_id']
+        cryptocurrency = Cryptocurrency.objects.create(user_id=user_id, **validate_data)
+        return cryptocurrency
 
 class AddCurrencySerilaizer(serializers.ModelSerializer):
     class Meta:
@@ -26,19 +48,35 @@ class CryptocurrencySerializer(serializers.ModelSerializer):
     user = CustomerCryptocurrency()
     class Meta:
         model = Cryptocurrency
-        fields = ['id', 'user','title','price','image','description', 'datetime_created']
+        fields = ['id', 'user','title','price','image','description','status','datetime_created']
 
+class ForAdminMasterCartSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = MasterCart
+        fields = ['id','title','price','image','description','country', 'inventory','datetime_created']
 
 class MasterCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = MasterCart
         fields = ['id','title','price','image','description','country', 'inventory','datetime_created']
 
+class ForAdminCommentCryptocurrencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentCryptocurrency
+        fields = ['id','user','body','status','datetime_created']
+        read_only_fields =['user']
+
+    def create(self, validated_data):
+        user_id = self.context['user_id']
+        currency_id = self.context['currency_pk']
+        return CommentCryptocurrency.objects.create(cryptocurrency_id = currency_id,user_id =user_id, **validated_data)
+
+
 class CommentCryptocurrencySerializer(serializers.ModelSerializer):
     user = CustomerCryptocurrency()
     class Meta:
         model = CommentCryptocurrency
-        fields = ['id','user','body', 'datetime_created']
+        fields = ['id','user','body','status','datetime_created']
 
 
 class AddCommentCryptocurrencySerializer(serializers.ModelSerializer):
@@ -52,11 +90,24 @@ class AddCommentCryptocurrencySerializer(serializers.ModelSerializer):
         currency_id = self.context['currency_pk']
         return CommentCryptocurrency.objects.create(cryptocurrency_id = currency_id,user_id =user_id, **validated_data)
 
+
+class ForAdminCommentMasterCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentMasterCart
+        fields = ['id','user','body','status', 'datetime_created']
+        read_only_fields =['user']
+    
+    def create(self , validate_data):
+        user_id = self.context['user_id']
+        mastercart_id = self.context['mastercart_pk']
+        return CommentMasterCart.objects.create(mastercart_id= mastercart_id , user_id= user_id , **validate_data)
+
+
 class CommentMasterCartSerializer(serializers.ModelSerializer):
     user = CustomerCryptocurrency()
     class Meta:
         model = CommentMasterCart
-        fields = ['id','user','body', 'datetime_created']
+        fields = ['id','user','body','status', 'datetime_created']
 
 
 class  AddCommentMasterCartSerializer(serializers.ModelSerializer):
@@ -160,6 +211,10 @@ class CartItemSerializer(serializers.ModelSerializer):
         if cartitem.cryptocurrency== None:
             return
         return cartitem.quantity_currency * cartitem.cryptocurrency.price
+
+
+
+
 
 
 

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
+
     'djoser',
     "debug_toolbar",
 
@@ -151,16 +154,21 @@ AUTH_USER_MODEL = 'core.CustomUser'
 
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING' : False ,
-    # 'DEFAULT_AUTHENTICATION_CLASSES':(
-    # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # )
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+        #  'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+    # 'authentication.authenticate.CustomAuthentication',
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
 
-# from datetime import timedelta
-# SIMPLE_JWT ={
-#     'AUTH_HEADER_TYPES':('JWT', ),
-#     'ACCESS_TOKEN_LIFETIME':timedelta(days=1)
-# }
+from datetime import timedelta
+SIMPLE_JWT ={
+    'AUTH_HEADER_TYPES':('JWT', ),
+    'ACCESS_TOKEN_LIFETIME':timedelta(days=1),
+
+
+}
 
 #  media files
 MEDIA_ROOT = str(BASE_DIR.joinpath('media'))

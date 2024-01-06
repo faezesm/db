@@ -7,6 +7,7 @@ router = routers.DefaultRouter()
 router.register('currencies', views.CryptocurrencyViewSet , basename = 'currency')
 router.register('mastercarts', views.MasterCartViewSet , basename='mastercart')
 router.register('carts', views.CartViewSet, basename='cart')
+router.register('customer', views.CustomerViewSet, basename='customer')
 
 
 

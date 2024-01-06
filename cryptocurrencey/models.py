@@ -33,11 +33,12 @@ class Discount(models.Model):
 class Cryptocurrency(models.Model):
     CURRENCY_STATUS_WAITING = 'w'
     CURRENCY_STATUS_APPROVED = 'a'
+    CURRENCY_STATUS_NOTAPPROVED='n'
 
     CURRENCY_STATUS =[
         (CURRENCY_STATUS_WAITING, 'Waiting'),
         (CURRENCY_STATUS_APPROVED, 'Approved'),
- 
+        (CURRENCY_STATUS_NOTAPPROVED, 'NOT Approved'),
     ]
     user = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='cryptocurrenceis')
     title = models.CharField(max_length=255)
@@ -71,11 +72,12 @@ class MasterCart(models.Model):
 class CommentCryptocurrency(models.Model):
     COMMENT_STATUS_WAITING = 'w'
     COMMENT_STATUS_APPROVED = 'a'
+    COMMENT_STATUS_CANCEL = 'c'
 
     COMMENT_STATUS =[
         (COMMENT_STATUS_WAITING, 'Waiting'),
         (COMMENT_STATUS_APPROVED, 'Approved'),
- 
+        (COMMENT_STATUS_CANCEL, 'Cancel'),
     ]
     user = models.ForeignKey(Customer , on_delete=models.CASCADE )
     cryptocurrency = models.ForeignKey(Cryptocurrency , on_delete=models.CASCADE , related_name='comments')
@@ -87,11 +89,12 @@ class CommentCryptocurrency(models.Model):
 class CommentMasterCart(models.Model):
     COMMENT_STATUS_WAITING = 'w'
     COMMENT_STATUS_APPROVED = 'a'
+    COMMENT_STATUS_CANCEL = 'c'
 
     COMMENT_STATUS =[
         (COMMENT_STATUS_WAITING, 'Waiting'),
         (COMMENT_STATUS_APPROVED, 'Approved'),
- 
+        (COMMENT_STATUS_CANCEL, 'Cancel'),
     ]
     user = models.ForeignKey(Customer , on_delete=models.CASCADE )
     mastercart= models.ForeignKey(MasterCart, on_delete=models.CASCADE, related_name='comments')
